@@ -8,6 +8,7 @@ export interface iSystemMember {
     type:string,
     name: string,
     coords: {x:number,y:number},
+    icoords: {x:number,y:number},
     class: string,
     description?: string,
     population?:number

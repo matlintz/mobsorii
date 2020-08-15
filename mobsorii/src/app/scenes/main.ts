@@ -11,23 +11,22 @@ export class main extends  Phaser.Scene {
     private systext:Phaser.GameObjects.Text;
     private dataservice:DataService
     private system:iSystem;
-    private systemMembers:Phaser.Physics.Arcade.Sprite[];
+    private systemMembers:Phaser.GameObjects.Sprite[];
 
     constructor(dataservice:DataService) {
-        
         super({
             key: 'main'
         });
         this.dataservice = dataservice;
+        this.systemMembers = [];
     }
     init(): void {
         console.log('init');
         this.dataservice.testSystem().then(
             (r) => {
                 this.system = r;
-                console.log(r);
             }
-        )
+        );
     }
 
     preload() {
@@ -54,32 +53,30 @@ export class main extends  Phaser.Scene {
         this.cameras.main.setBounds(0, 0, 4000, 4000);
         this.physics.world.setBounds(0, 0, 4000, 4000);
         this.add.image(0, 0, 'background').setOrigin(0).setScale(4);
-        this.coords = this.add.text(50, 50, '', { fontFamily: 'Arial', fontSize: 64, color: '#00ff00' });
+        this.coords = this.add.text(50, 50, '', { fontFamily: 'Arial', fontSize: 48, color: '#00ff00' });
         this.coords.setScrollFactor(0);
         this.com = this.add.text(50,100,'', { fontFamily: 'Arial', fontSize: 32, color: '#00ff00' });
         this.com.setScrollFactor(0);
+        let self = this;
         if (this.system)
         {
-            let self = this;
             this.system.objects.forEach(
                 (o) => {
-                    console.log(o);
-                    if (o.type === 'asteroid'){
-
-                    }else{
-
-                    }
-                    let systemObject = this.add.sprite(o.coords.x,o.coords.y,o.type +  o.class).setInteractive();
+                    let systemObject = this.add.sprite(o.icoords.x,o.icoords.y,o.type +  o.class).setInteractive();
                     systemObject.on('pointerdown', function () {
                         self.com.setText(o.name);
                     });
+                    this.systemMembers.push(systemObject);
                 }
             )
         }
 
-        this.spaceship = this.physics.add.sprite(2000, 2000, 'ship');
+        this.spaceship = this.physics.add.sprite(2000, 2000, 'ship').setInteractive();
+        this.spaceship.on('pointerdown', function() {
+            self.spaceship.setVelocity(0,0);
+        });
         this.physics.world.enable([ this.spaceship ]);
-        this.spaceship.setDrag(35);//https://photonstorm.github.io/phaser3-docs/Phaser.Physics.Arcade.Components.Drag.html#setDrag
+        this.spaceship.setDrag(45);//https://photonstorm.github.io/phaser3-docs/Phaser.Physics.Arcade.Components.Drag.html#setDrag
         this.cursors = this.input.keyboard.createCursorKeys();
         this.spaceship.setCollideWorldBounds(true);
         this.pointer = this.input.activePointer;//https://photonstorm.github.io/phaser3-docs/Phaser.Input.Pointer.html
@@ -87,6 +84,7 @@ export class main extends  Phaser.Scene {
         this.cameras.main.startFollow(this.spaceship);
     }
     update() {
+        
         if (this.pointer.isDown) {
             this.SetVelocityAndRotation(this.pointer);
         } else if (this.touch.isDown) {
