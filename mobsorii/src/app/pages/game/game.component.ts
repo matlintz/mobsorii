@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import 'phaser';
 import {main} from '../../scenes/main';
+import { DataService } from '../../services/data.service'
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
@@ -9,7 +10,7 @@ import {main} from '../../scenes/main';
 export class GameComponent implements OnInit {
   public phaserConfig:Phaser.Types.Core.GameConfig;
   public phaser:Phaser.Game;
-  constructor() { }
+  constructor(public data:DataService) { }
 
   ngOnInit(): void {
       this.phaserConfig = {
@@ -29,7 +30,7 @@ export class GameComponent implements OnInit {
           }
         },
         backgroundColor: "#000000",
-        scene:[main],
+        scene:[new main(this.data)],
       };
       this.phaser = new Phaser.Game(this.phaserConfig);    
   

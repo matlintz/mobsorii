@@ -1,28 +1,54 @@
 import 'phaser';
-
+import {DataService} from '../services/data.service';
+import { iSystem } from '../interfaces';
 export class main extends  Phaser.Scene {
     private spaceship: Phaser.Physics.Arcade.Sprite;
     private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
     private pointer: Phaser.Input.Pointer;
     private touch: Phaser.Input.Pointer;
     private coords:Phaser.GameObjects.Text;
-    constructor() {
+    private com:Phaser.GameObjects.Text;
+    private systext:Phaser.GameObjects.Text;
+    private dataservice:DataService
+    private system:iSystem;
+    private systemMembers:Phaser.Physics.Arcade.Sprite[];
+
+    constructor(dataservice:DataService) {
         
         super({
             key: 'main'
         });
+        this.dataservice = dataservice;
     }
     init(): void {
         console.log('init');
-      
+        this.dataservice.testSystem().then(
+            (r) => {
+                this.system = r;
+                console.log(r);
+            }
+        )
     }
 
     preload() {
         this.load.image('ship', 'assets/rship.png');
         this.load.image('background', 'assets/starfield-ns.png');
+        this.load.image('starm','assets/s/m.png');
+        this.load.image('asteroida','assets/asteroid.png');
+        this.preloadPlanets();
+    }
+
+    preloadPlanets()
+    {
+       let planets = 'abcdefghijklmnopqrstuvwxyz';
+       for (let i = 0; i < planets.length; i++) {
+
+        this.load.image('planet'+ planets[i],'assets/p/'+planets[i]+'.png');
+      }
     }
 
     create(): void {
+       
         console.log('main scene create');
         
         this.cameras.main.setBounds(0, 0, 4000, 4000);
@@ -30,7 +56,28 @@ export class main extends  Phaser.Scene {
         this.add.image(0, 0, 'background').setOrigin(0).setScale(4);
         this.coords = this.add.text(50, 50, '', { fontFamily: 'Arial', fontSize: 64, color: '#00ff00' });
         this.coords.setScrollFactor(0);
-        this.spaceship = this.physics.add.sprite(this.game.scale.parentSize.width / 2, this.game.scale.parentSize.height / 2, 'ship');
+        this.com = this.add.text(50,100,'', { fontFamily: 'Arial', fontSize: 32, color: '#00ff00' });
+        this.com.setScrollFactor(0);
+        if (this.system)
+        {
+            let self = this;
+            this.system.objects.forEach(
+                (o) => {
+                    console.log(o);
+                    if (o.type === 'asteroid'){
+
+                    }else{
+
+                    }
+                    let systemObject = this.add.sprite(o.coords.x,o.coords.y,o.type +  o.class).setInteractive();
+                    systemObject.on('pointerdown', function () {
+                        self.com.setText(o.name);
+                    });
+                }
+            )
+        }
+
+        this.spaceship = this.physics.add.sprite(2000, 2000, 'ship');
         this.physics.world.enable([ this.spaceship ]);
         this.spaceship.setDrag(35);//https://photonstorm.github.io/phaser3-docs/Phaser.Physics.Arcade.Components.Drag.html#setDrag
         this.cursors = this.input.keyboard.createCursorKeys();
