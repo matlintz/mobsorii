@@ -24,10 +24,7 @@ export class GameComponent implements OnInit {
           autoCenter: Phaser.Scale.CENTER_BOTH
         },
         physics: {
-          default: 'arcade',
-          arcade: {
-            debug: true
-          }
+          default: 'arcade'
         },
         backgroundColor: "#000000",
         scene:[new main(this.data)],

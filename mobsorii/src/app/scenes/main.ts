@@ -115,7 +115,7 @@ export class main extends  Phaser.Scene {
         let wPointer:Phaser.Types.Math.Vector2Like = {x:pointer.worldX,y:pointer.worldY};
         let velocity: Phaser.Math.Vector2 = new Phaser.Math.Vector2()
         this.spaceship.rotation = Phaser.Math.Angle.BetweenPoints(this.spaceship, wPointer);//https://photonstorm.github.io/phaser3-docs/Phaser.Math.Angle.html#.BetweenPoints__anchor
-        this.physics.velocityFromRotation(this.spaceship.rotation, 150, velocity);//https://photonstorm.github.io/phaser3-docs/Phaser.Physics.Arcade.ArcadePhysics.html#velocityFromRotation__anchor
+        this.physics.velocityFromRotation(this.spaceship.rotation, 250, velocity);//https://photonstorm.github.io/phaser3-docs/Phaser.Physics.Arcade.ArcadePhysics.html#velocityFromRotation__anchor
         this.spaceship.setVelocity(velocity.x, velocity.y);//https://photonstorm.github.io/phaser3-docs/Phaser.Physics.Arcade.Components.Velocity.html#setVelocity__anchor
         
     }
