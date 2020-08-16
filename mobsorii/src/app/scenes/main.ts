@@ -21,12 +21,11 @@ export class main extends  Phaser.Scene {
         this.systemMembers = [];
     }
     init(): void {
-        console.log('init');
-        this.dataservice.testSystem().then(
+        this.dataservice.getSystem({x:0,y:0}).then(
             (r) => {
                 this.system = r;
             }
-        );
+        )
     }
 
     preload() {

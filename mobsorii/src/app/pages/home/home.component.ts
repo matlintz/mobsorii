@@ -12,8 +12,11 @@ export class HomeComponent implements OnInit {
   constructor(public dataservice:DataService) { }
 
   ngOnInit(): void {
+    this.dataservice.openDataBase().then(
+      (r) => {
+        
+      }
+    )
   }
-  initDb() {
-    this.dataservice.initializeSystems();
-  }
+  
 }
