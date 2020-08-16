@@ -12,11 +12,10 @@ export class DataService {
   getPlayer(): Promise<iPlayer> {
     return new Promise((resolve) => {
       let playerString = localStorage.getItem('player');
-      if (playerString && playerString.length > 0)
-      {
+      if (playerString && playerString.length > 0) {
         resolve(JSON.parse(playerString));
-      }else{
-        let player:iPlayer = { icoords: { x: 1800, y: 1900 }, coords: { x: 0, y: 0 }, credits: 0, shipnamne: '' };
+      } else {
+        let player: iPlayer = { icoords: { x: 1800, y: 1900 }, coords: { x: 0, y: 0 }, credits: 0, shipnamne: '' };
         this.storePlayer(player).then(
           () => {
             resolve(player);
@@ -35,15 +34,15 @@ export class DataService {
   deleteDataBase(): Promise<boolean> {
     return new Promise((resolve) => {
       localStorage.removeItem('player');
-      
-      if (this.db){
+
+      if (this.db) {
         this.db.close();
       }
       let req = window.indexedDB.deleteDatabase("mobsorII");
-      req.onsuccess = function() {
+      req.onsuccess = function () {
         resolve(true);
       }
-      req.onerror = function(e) {
+      req.onerror = function (e) {
         console.log(e);
       }
     });
@@ -77,12 +76,42 @@ export class DataService {
           t.oncomplete = function (e) {
             resolve(true);
           }
-          
+
         }
       }
     });
   }
 
+  getAllSystems(): Promise<Array<iSystemMember>> {
+    return new Promise((resolve) => {
+      let result: Array<iSystemMember> = [];
+      this.openDataBase().then(
+        () => {
+          let t = this.db.transaction('systems', "readonly")
+          let o = t.objectStore('systems');
+          let r = o.openCursor();
+          r.onsuccess = function (event) {
+            let cursor = event.target['result'];
+            if (cursor) {
+              let sys:iSystemMember = cursor.value;
+              if (sys.type === 'planet'){
+                sys.image = 'assets/p/'+sys.class+'.png';
+              }
+              if (sys.type === 'asteroid'){
+                sys.image = 'assets/asteroid.png';
+              }
+              if (sys.type === 'star'){
+                sys.image = 'assets/s/'+ sys.class + '.png';
+              }
+              result.push(sys);
+              cursor.continue();
+            }else{
+              resolve(result);
+            }
+          }
+        });
+    });
+  }
   getSystem(coords: { x: number, y: number }): Promise<iSystem> {
     return new Promise((resolve) => {
       let results: iSystem = { coords: { x: coords.x, y: coords.y }, objects: [] };
@@ -130,19 +159,21 @@ export class DataService {
         let player: iPlayer = { icoords: { x: 1800, y: 1900 }, coords: { x: 0, y: 0 }, credits: 0, shipnamne: '' };
         this.storePlayer(player).then(
           (r) => {
-            let sys: iSystem = {
-              coords: { x: 0, y: 0 },
-              objects: [
-                { coords: { x: 0, y: 0 }, type: 'star', name: 'Sol', class: 'm', icoords: { x: 2000, y: 2000 } },
-                { coords: { x: 0, y: 0 }, type: 'planet', name: 'Earth', class: 'o', icoords: { x: 1870, y: 2300 } },
-                { coords: { x: 0, y: 0 }, type: 'planet', name: 'Mars', class: 'v', icoords: { x: 2300, y: 1120 } },
-                { coords: { x: 0, y: 0 }, type: 'asteroid', name: 'Asteroid', class: 'a', icoords: { x: 1871, y: 920 } }
-              ]
-            }
-            sys.objects.forEach((o) => {
+            let galxyObjects:Array<iSystemMember> = [
+              { coords: { x: 0, y: 0 }, type: 'star', name: 'Sol', class: 'm', icoords: { x: 2000, y: 2000 } },
+              { coords: { x: 0, y: 0 }, type: 'planet', name: 'Earth', class: 'o', icoords: { x: 1870, y: 2300 } },
+              { coords: { x: 0, y: 0 }, type: 'planet', name: 'Mars', class: 'v', icoords: { x: 2300, y: 1120 } },
+              { coords: { x: 0, y: 0 }, type: 'asteroid', name: 'Asteroid', class: 'a', icoords: { x: 1871, y: 920 } },
+              { coords: { x: 5, y: 5 }, type: 'star', name: 'Mobsor Prime', class: 'm', icoords: { x: 1960, y: 1960 } },
+              { coords: { x: 5, y: 5 }, type: 'planet', name: 'Mobsor', class: 'o', icoords: { x: 2400, y: 1960 } },
+              { coords: { x: 5, y: 5 }, type: 'planet', name: 'Taraun', class: 'j', icoords: { x: 3096, y: 3020 } },
+
+            ]
+         
+            galxyObjects.forEach((o) => {
               this.insertSystemObject(o).then(
                 (r) => {
-                 
+
                 }
               );
             }

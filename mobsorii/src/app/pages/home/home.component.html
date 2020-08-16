@@ -1,11 +1,26 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-6">  
-            <a class="button primary" href="game">Play</a>  
+            <a *ngIf="!dbInitializing" class="button primary" href="game">Play 0.0.3</a>  
         </div>
         <div class="col-sm-6">
             <button *ngIf="!dbInitializing" class="secondary" (click)="redoDatabase()">Redo Database</button>
             <span *ngIf="dbInitializing">Initializing Database</span>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <button *ngIf="!dbInitializing" (click)="showSystems()">Show Galaxy Object</button>
+        </div>
+    </div>
+    <div class="row" *ngFor="let system of universeObjects">
+        <div class="col-sm-4">{{system.x}}:{{system.y}} {{system.icoords.x}}:{{system.icoords.y}} </div>
+        <div class="col-sm-4" *ngIf="!system.image">{{system.name}}</div>
+        <div class="col-sm-4"><figure *ngIf="system.image">
+            <img [src]="system.image">
+            <figcaption>{{system.name}}</figcaption>   
+        </figure></div>
+    </div>
+    
 </div>

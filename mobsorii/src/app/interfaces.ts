@@ -11,7 +11,8 @@ export interface iSystemMember {
     icoords: {x:number,y:number},
     class: string,
     description?: string,
-    population?:number
+    population?:number,
+    image?:string
 }
 
 export interface iPlayer {
