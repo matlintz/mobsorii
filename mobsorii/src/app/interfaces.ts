@@ -13,3 +13,10 @@ export interface iSystemMember {
     description?: string,
     population?:number
 }
+
+export interface iPlayer {
+    coords: {x:number,y:number},
+    icoords: {x:number,y:number},
+    credits:number,
+    shipnamne:string
+}
