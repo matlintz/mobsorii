@@ -1,1 +1,2 @@
-<a href="game">Play</a>
+<span *ngIf="!dbInitializing"><a href="game">Play</a> <button (click)="redoDatabase()">Redo Database</button></span>
+<span *ngIf="dbInitializing">Initializing Database</span>

@@ -6,7 +6,7 @@ import { DataService } from '../../services/data.service';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-
+  public dbInitializing: boolean = false;
   constructor(public dataservice: DataService) { }
 
   ngOnInit(): void {
@@ -15,6 +15,22 @@ export class HomeComponent implements OnInit {
 
       }
     )
+  }
+
+  redoDatabase() {
+    this.dbInitializing = true;
+    this.dataservice.openDataBase().then(
+      () => {
+        this.dataservice.deleteDataBase().then(
+          () => {
+            this.dataservice.openDataBase().then(
+              () => {
+                this.dbInitializing = false;
+                confirm('Database reinitialized');
+              });
+          });
+      });
+
   }
 
 }

@@ -12,16 +12,41 @@ export class DataService {
   getPlayer(): Promise<iPlayer> {
     return new Promise((resolve) => {
       let playerString = localStorage.getItem('player');
-      let player: iPlayer = JSON.parse(playerString);
-      resolve(player);
-    })
+      if (playerString && playerString.length > 0)
+      {
+        resolve(JSON.parse(playerString));
+      }else{
+        let player:iPlayer = { icoords: { x: 1800, y: 1900 }, coords: { x: 0, y: 0 }, credits: 0, shipnamne: '' };
+        this.storePlayer(player).then(
+          () => {
+            resolve(player);
+          });
+      }
+    });
   }
 
   storePlayer(player: iPlayer): Promise<boolean> {
     return new Promise((resolve) => {
       let playerString = JSON.stringify(player);
       localStorage.setItem("player", playerString);
+      resolve(true);
     })
+  }
+  deleteDataBase(): Promise<boolean> {
+    return new Promise((resolve) => {
+      localStorage.removeItem('player');
+      
+      if (this.db){
+        this.db.close();
+      }
+      let req = window.indexedDB.deleteDatabase("mobsorII");
+      req.onsuccess = function() {
+        resolve(true);
+      }
+      req.onerror = function(e) {
+        console.log(e);
+      }
+    });
   }
 
   openDataBase(): Promise<boolean> {
@@ -48,6 +73,11 @@ export class DataService {
           galaxy.createIndex('description', 'description', { unique: false });
 
           self.initializeSystems();
+          let t = event.target['transaction'];
+          t.oncomplete = function (e) {
+            resolve(true);
+          }
+          
         }
       }
     });
@@ -55,7 +85,7 @@ export class DataService {
 
   getSystem(coords: { x: number, y: number }): Promise<iSystem> {
     return new Promise((resolve) => {
-      let results:iSystem = {coords:{x:coords.x,y:coords.y},objects:[]};
+      let results: iSystem = { coords: { x: coords.x, y: coords.y }, objects: [] };
       this.openDataBase().then(
         () => {
           let t = this.db.transaction('systems', 'readonly');
@@ -71,10 +101,10 @@ export class DataService {
               });
             resolve(results);
           }
-          r.onerror = function(e) {
+          r.onerror = function (e) {
             console.log(e)
-          }     
-})
+          }
+        })
     });
   }
 
@@ -98,26 +128,27 @@ export class DataService {
   initializeSystems() {
     this.openDataBase().then(
       () => {
-        let player:iPlayer = {icoords:{x:0,y:0},coords:{x:1800,y:1900},credits:0,shipnamne:''};
-        this.storePlayer(player);
-        let sys: iSystem = {
-          coords: { x: 0, y: 0 },
-          objects: [
-            { coords: { x: 0, y: 0 }, type: 'star', name: 'Sol', class: 'm', icoords: { x: 2000, y: 2000 } },
-            { coords: { x: 0, y: 0 }, type: 'planet', name: 'Earth', class: 'o', icoords: { x: 1870, y: 2300 } },
-            { coords: { x: 0, y: 0 }, type: 'planet', name: 'Mars', class: 'v', icoords: { x: 2300, y: 1120 } },
-            { coords: { x: 0, y: 0 }, type: 'asteroid', name: 'Asteroid', class: 'a', icoords: { x: 1871, y: 920 } }
-          ]
-        }
-        sys.objects.forEach((o) => {
-          this.insertSystemObject(o).then(
-            (r) => {
-              console.log(r);
+        let player: iPlayer = { icoords: { x: 1800, y: 1900 }, coords: { x: 0, y: 0 }, credits: 0, shipnamne: '' };
+        this.storePlayer(player).then(
+          (r) => {
+            let sys: iSystem = {
+              coords: { x: 0, y: 0 },
+              objects: [
+                { coords: { x: 0, y: 0 }, type: 'star', name: 'Sol', class: 'm', icoords: { x: 2000, y: 2000 } },
+                { coords: { x: 0, y: 0 }, type: 'planet', name: 'Earth', class: 'o', icoords: { x: 1870, y: 2300 } },
+                { coords: { x: 0, y: 0 }, type: 'planet', name: 'Mars', class: 'v', icoords: { x: 2300, y: 1120 } },
+                { coords: { x: 0, y: 0 }, type: 'asteroid', name: 'Asteroid', class: 'a', icoords: { x: 1871, y: 920 } }
+              ]
             }
-          )
-        })
-
+            sys.objects.forEach((o) => {
+              this.insertSystemObject(o).then(
+                (r) => {
+                 
+                }
+              );
+            }
+            );
+          });
       });
-
   }
 }
