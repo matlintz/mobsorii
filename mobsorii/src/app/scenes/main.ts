@@ -1,6 +1,6 @@
 import 'phaser';
 import {DataService} from '../services/data.service';
-import { iSystem } from '../interfaces';
+import { iSystem, iPlayer } from '../interfaces';
 export class main extends  Phaser.Scene {
     private spaceship: Phaser.Physics.Arcade.Sprite;
     private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -12,7 +12,7 @@ export class main extends  Phaser.Scene {
     private dataservice:DataService
     private system:iSystem;
     private systemMembers:Phaser.GameObjects.Sprite[];
-
+    private player:iPlayer;
     constructor(dataservice:DataService) {
         super({
             key: 'main'
@@ -21,9 +21,18 @@ export class main extends  Phaser.Scene {
         this.systemMembers = [];
     }
     init(): void {
-        this.dataservice.getSystem({x:0,y:0}).then(
-            (r) => {
-                this.system = r;
+       
+        this.dataservice.getPlayer().then(
+            (p) => {
+                this.player = p;
+                console.log(this.player);
+                this.dataservice.getSystem({x:p.coords.x,y:p.coords.y}).then(
+                    (r) => {
+                        console.log('result');
+                        this.system = r;
+                        console.log(r);
+                    }
+                );
             }
         )
     }
@@ -70,7 +79,7 @@ export class main extends  Phaser.Scene {
             )
         }
 
-        this.spaceship = this.physics.add.sprite(2000, 2000, 'ship').setInteractive();
+        this.spaceship = this.physics.add.sprite(this.player.icoords.x, this.player.icoords.y, 'ship').setInteractive();
         this.spaceship.on('pointerdown', function() {
             self.spaceship.setVelocity(0,0);
         });

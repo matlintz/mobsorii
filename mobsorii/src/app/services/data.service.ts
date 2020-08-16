@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { iSystem, iSystemMember } from '../interfaces';
+import { iSystem, iSystemMember, iPlayer } from '../interfaces';
 @Injectable({
   providedIn: 'root'
 })
@@ -7,6 +7,21 @@ export class DataService {
   private db: IDBDatabase;
   constructor() {
     console.log('data service constructor')
+  }
+
+  getPlayer(): Promise<iPlayer> {
+    return new Promise((resolve) => {
+      let playerString = localStorage.getItem('player');
+      let player: iPlayer = JSON.parse(playerString);
+      resolve(player);
+    })
+  }
+
+  storePlayer(player: iPlayer): Promise<boolean> {
+    return new Promise((resolve) => {
+      let playerString = JSON.stringify(player);
+      localStorage.setItem("player", playerString);
+    })
   }
 
   openDataBase(): Promise<boolean> {
@@ -24,8 +39,8 @@ export class DataService {
       request.onupgradeneeded = function (event) {
         self.db = event.target['result'];
         if (event.oldVersion === 0) {
-          let galaxy = self.db.createObjectStore('systems',  { keyPath: 'id', autoIncrement: true });
-          galaxy.createIndex('coords', ['x', 'y'], { unique: false});
+          let galaxy = self.db.createObjectStore('systems', { keyPath: 'id', autoIncrement: true });
+          galaxy.createIndex('coords', ['x', 'y'], { unique: false });
           galaxy.createIndex('icoords', ['x', 'y'], { unique: false });
           galaxy.createIndex('type', 'type', { unique: false });
           galaxy.createIndex('name', 'name', { unique: false });
@@ -38,38 +53,37 @@ export class DataService {
     });
   }
 
-  getSystem(coords:{x:number,y:number}): Promise<iSystem> {
+  getSystem(coords: { x: number, y: number }): Promise<iSystem> {
     return new Promise((resolve) => {
       let results:iSystem = {coords:{x:coords.x,y:coords.y},objects:[]};
       this.openDataBase().then(
         () => {
           let t = this.db.transaction('systems', 'readonly');
           let s = t.objectStore('systems');
-          var keyRangeValue = IDBKeyRange.only([coords.x,coords.y]);
+          var keyRangeValue = IDBKeyRange.only([coords.x, coords.y]);
           let i = s.index('coords');
           let r = i.getAll(keyRangeValue);
           r.onsuccess = function () {
             console.group(r.result);
             r.result.forEach(
               (sys) => {
-                  results.objects.push(sys);
-
-              }
-            );
+                results.objects.push(sys);
+              });
             resolve(results);
           }
-          
-        }
-      )
-    })
+          r.onerror = function(e) {
+            console.log(e)
+          }     
+})
+    });
   }
 
   insertSystemObject(o: iSystemMember): Promise<any> {
     return new Promise((resolve) => {
       let t = this.db.transaction('systems', "readwrite");
       let s = t.objectStore('systems');
-      let r = s.add({x:o.coords.x,y:o.coords.y, type: o.type, name: o.name, class: o.class, icoords: { x: o.icoords.x, y: o.icoords.y }, description: o.description });
-      
+      let r = s.add({ x: o.coords.x, y: o.coords.y, type: o.type, name: o.name, class: o.class, icoords: { x: o.icoords.x, y: o.icoords.y }, description: o.description });
+
       r.onsuccess = function (e) {
         resolve(true);
       }
@@ -84,6 +98,8 @@ export class DataService {
   initializeSystems() {
     this.openDataBase().then(
       () => {
+        let player:iPlayer = {icoords:{x:0,y:0},coords:{x:1800,y:1900},credits:0,shipnamne:''};
+        this.storePlayer(player);
         let sys: iSystem = {
           coords: { x: 0, y: 0 },
           objects: [
