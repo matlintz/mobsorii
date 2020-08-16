@@ -94,7 +94,6 @@ export class DataService {
           let i = s.index('coords');
           let r = i.getAll(keyRangeValue);
           r.onsuccess = function () {
-            console.group(r.result);
             r.result.forEach(
               (sys) => {
                 results.objects.push(sys);
