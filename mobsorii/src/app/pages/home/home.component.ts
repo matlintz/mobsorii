@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../../services/data.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -7,7 +8,7 @@ import { DataService } from '../../services/data.service';
 })
 export class HomeComponent implements OnInit {
   public dbInitializing: boolean = false;
-  constructor(public dataservice: DataService) { }
+  constructor(public dataservice: DataService,public router: Router) { }
 
   ngOnInit(): void {
     this.dataservice.openDataBase().then(
