@@ -21,8 +21,8 @@ export class main extends Phaser.Scene {
         this.dataservice = dataservice;
         this.systemMembers = [];
     }
-    init(): void {
 
+    init(): void {
         this.dataservice.getPlayer().then(
             (p) => {
                 this.player = p;
@@ -40,14 +40,11 @@ export class main extends Phaser.Scene {
     preloadPlanets() {
         let planets = 'abcdefghijklmnopqrstuvwxyz';
         for (let i = 0; i < planets.length; i++) {
-
             this.load.image('planet' + planets[i], 'assets/p/' + planets[i] + '.png');
         }
     }
 
     create(): void {
-
-        console.log('main scene create');
         this.cursors = this.input.keyboard.createCursorKeys();
         this.pointer = this.input.activePointer;//https://photonstorm.github.io/phaser3-docs/Phaser.Input.Pointer.html
         this.touch = this.input.pointer1;
@@ -110,8 +107,7 @@ export class main extends Phaser.Scene {
 
             if (this.cursors.left.isDown) {
                 this.spaceship.angle -= 1;
-            }
-            if (this.cursors.right.isDown) {
+            } else if (this.cursors.right.isDown) {
                 this.spaceship.angle += 1
 
             }
@@ -119,13 +115,13 @@ export class main extends Phaser.Scene {
                 let velocity: Phaser.Math.Vector2 = new Phaser.Math.Vector2()
                 this.physics.velocityFromRotation(this.spaceship.rotation, 150, velocity);
                 this.spaceship.setVelocity(velocity.x, velocity.y);
-            }
-            if (this.cursors.down.isDown) {
+            } else if (this.cursors.down.isDown) {
                 this.spaceship.setVelocity(0);
             }
-            this.coords.text = this.player.coords.x + ':' + this.player.coords.y + ' ' + Math.round(this.spaceship.x) + ' ' + Math.round(this.spaceship.y);
+            this.player.icoords = { x: this.spaceship.x, y: this.spaceship.y }
+            this.coords.text = this.player.coords.x + ':' + this.player.coords.y + ' ' + Math.round(this.player.icoords.x) + ' ' + Math.round(this.player.icoords.y);
+
             if (this.spaceship.x > 3900 || this.spaceship.x < 100 || this.spaceship.y > 3900 || this.spaceship.y < 100) {
-                console.log('travel to');
                 this.isTraveling = true;
                 this.travelTo();
             }
@@ -133,6 +129,7 @@ export class main extends Phaser.Scene {
     }
 
     travelTo() {
+
         let direction: { x: number, y: number } = { x: 0, y: 0 };
         let newiCoords: { x: number, y: number } = this.player.icoords;
         if (this.spaceship.x > 3900) {
@@ -163,17 +160,14 @@ export class main extends Phaser.Scene {
             () => {
                 this.isTraveling = false;
                 this.spaceship.setPosition(this.player.icoords.x, this.player.icoords.y);
-
-            }
-        )
-
+            });
     }
+
     SetVelocityAndRotation(pointer: Phaser.Input.Pointer) {
         let wPointer: Phaser.Types.Math.Vector2Like = { x: pointer.worldX, y: pointer.worldY };
         let velocity: Phaser.Math.Vector2 = new Phaser.Math.Vector2()
         this.spaceship.rotation = Phaser.Math.Angle.BetweenPoints(this.spaceship, wPointer);//https://photonstorm.github.io/phaser3-docs/Phaser.Math.Angle.html#.BetweenPoints__anchor
         this.physics.velocityFromRotation(this.spaceship.rotation, 250, velocity);//https://photonstorm.github.io/phaser3-docs/Phaser.Physics.Arcade.ArcadePhysics.html#velocityFromRotation__anchor
         this.spaceship.setVelocity(velocity.x, velocity.y);//https://photonstorm.github.io/phaser3-docs/Phaser.Physics.Arcade.Components.Velocity.html#setVelocity__anchor
-
     }
 }
