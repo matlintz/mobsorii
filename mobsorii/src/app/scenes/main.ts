@@ -91,18 +91,18 @@ export class main extends Phaser.Scene {
                         this.system.objects.forEach(
                             (o) => {
                                 let systemObject = this.add.sprite(o.icoords.x, o.icoords.y, o.type + o.class).setInteractive();
+                               
                                 systemObject.on('pointerdown', function () {
+                                    self.player.icoords = {x:self.spaceship.x,y:self.spaceship.y};
                                     self.spaceship.setVelocity(0, 0);
                                     if (o.type == 'star') {
                                         if (self.activeGraphics) {
                                             self.activeGraphics.destroy();
                                         }
-
                                         self.activeGraphics = self.add.graphics({
                                             x: o.icoords.x - 40, y: o.icoords.y - 40,
                                             fillStyle: { color: 0x0000ff, alpha: 0.6 },
                                             lineStyle: { color: 0x00ff00 }
-
                                         });
                                         if (self.activeGraphicsText) {
                                             self.activeGraphicsText.destroy();
@@ -125,6 +125,9 @@ export class main extends Phaser.Scene {
                                         self.com.setText(o.name);
                                     } else {
                                         self.com.setText(o.name);
+                                        self.player.icoords = {x:self.spaceship.x,y:self.spaceship.y};
+                                        self.dataservice.storePlayer(self.player).then(
+                                            () => {});
                                     }
                                 });
                                 this.systemMembers.push(systemObject);
