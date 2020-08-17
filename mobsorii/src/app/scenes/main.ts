@@ -10,7 +10,7 @@ export class main extends Phaser.Scene {
     private com: Phaser.GameObjects.Text;
     private dataservice: DataService
     private system: iSystem;
-    private systemMembers: Phaser.GameObjects.Sprite[];
+    private systemMembers: Phaser.GameObjects.Sprite[] = [];
     private player: iPlayer;
     private isTraveling: boolean = false;
     private finishedLoading: boolean = false;
@@ -22,7 +22,6 @@ export class main extends Phaser.Scene {
             key: 'main'
         });
         this.dataservice = dataservice;
-        this.systemMembers = [];
     }
 
     init(): void {
