@@ -28,7 +28,7 @@ export class main extends Phaser.Scene {
         this.dataservice.getPlayer().then(
             (p) => {
                 this.player = p;
-                
+
             });
     }
 
@@ -55,9 +55,9 @@ export class main extends Phaser.Scene {
         this.cameras.main.setBounds(0, 0, 4000, 4000);
         this.physics.world.setBounds(0, 0, 4000, 4000);
         this.add.image(0, 0, 'background').setOrigin(0).setScale(4);
-        this.coords = this.add.text(40, 40, '', { fontFamily: 'Arial', fontSize: 32, color: '#00ff00' });
+        this.coords = this.add.text(25, 25, '', { fontFamily: 'Arial', fontSize: 28, color: '#00ff00' });
         this.coords.setScrollFactor(0);
-        this.com = this.add.text(50, 100, '', { fontFamily: 'Arial', fontSize: 32, color: '#00ff00' });
+        this.com = this.add.text(25, 50, '', { fontFamily: 'Arial', fontSize: 28, color: '#00ff00' });
         this.com.setScrollFactor(0);
         this.loadSystem().then(
             () => {
@@ -104,19 +104,22 @@ export class main extends Phaser.Scene {
                                             lineStyle: { color: 0x00ff00 }
 
                                         });
-                                        if (self.activeGraphicsText)
-                                        {
+                                        if (self.activeGraphicsText) {
                                             self.activeGraphicsText.destroy();
-                                            
+
                                         }
                                         self.activeGraphicsText = self.add.text(o.icoords.x, o.icoords.y, 'Refuel', { fontFamily: 'Arial', fontSize: 32, color: '#ffffff' });
                                         self.activeGraphicsText.setInteractive();
-                                        self.activeGraphicsText.on('pointerdown',function(){
+                                        self.activeGraphicsText.on('pointerdown', function () {
                                             self.player.ship.fuel = self.player.ship.fuelmax;
-                                            self.activeGraphicsText.destroy();
-                                            self.activeGraphics.destroy();
-                                            self.isDomShowing = false;
-                                        })
+                                            self.dataservice.storePlayer(self.player).then(
+                                                () => {
+                                                    self.activeGraphicsText.destroy();
+                                                    self.activeGraphics.destroy();
+                                                    self.isDomShowing = false;
+                                                });
+
+                                        });
                                         self.activeGraphics.fillRect(0, 0, 180, 180);
                                         self.isDomShowing = true;
                                         self.com.setText(o.name);
@@ -134,16 +137,15 @@ export class main extends Phaser.Scene {
 
     update() {
         if (this.player.ship.fuel > 0 && !this.isTraveling && !this.isDomShowing && this.finishedLoading) {
-            if (this.pointer.isDown || this.touch.isDown || this.cursors.up.isDown)
-            {
-                this.player.ship.fuel -=1;
+            if (this.pointer.isDown || this.touch.isDown || this.cursors.up.isDown) {
+                this.player.ship.fuel -= 1;
             }
             if (this.pointer.isDown) {
-                
+
                 this.SetVelocityAndRotation(this.pointer);
             } else if (this.touch.isDown) {
                 this.SetVelocityAndRotation(this.touch);
-                
+
             }
 
             if (this.cursors.left.isDown) {
