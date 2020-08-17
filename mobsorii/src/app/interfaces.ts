@@ -19,5 +19,16 @@ export interface iPlayer {
     coords: {x:number,y:number},
     icoords: {x:number,y:number},
     credits:number,
-    shipnamne:string
+    ship:iShip
+}
+
+export interface iShip {
+  name:string,
+  fuel:number,
+  fuelmax:number,
+  weapons: Array<iWeapon>,   
+}
+
+export interface iWeapon {
+
 }

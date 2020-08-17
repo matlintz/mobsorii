@@ -15,10 +15,11 @@ export class GameComponent implements OnInit {
   ngOnInit(): void {
       this.phaserConfig = {
         type: Phaser.AUTO,
-        parent: 'content',
+        parent: 'game',
         width: window.innerWidth,
         height: window.innerHeight,
         resolution: 1,
+
         scale: {
           mode: Phaser.Scale.RESIZE,
           autoCenter: Phaser.Scale.CENTER_BOTH

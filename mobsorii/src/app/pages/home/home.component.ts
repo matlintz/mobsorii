@@ -22,7 +22,6 @@ export class HomeComponent implements OnInit {
   showSystems() {
     this.dataservice.getAllSystems().then(
       (r) => {
-        console.log(r);
         this.universeObjects = r;
       }
     )
@@ -37,7 +36,7 @@ export class HomeComponent implements OnInit {
             this.dataservice.openDataBase().then(
               () => {
                 this.dbInitializing = false;
-                confirm('Database reinitialized');
+                
               });
           });
       });

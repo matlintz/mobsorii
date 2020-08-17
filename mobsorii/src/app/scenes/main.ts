@@ -14,6 +14,9 @@ export class main extends Phaser.Scene {
     private player: iPlayer;
     private isTraveling: boolean = false;
     private finishedLoading: boolean = false;
+    private isDomShowing: boolean = false;
+    private activeGraphics: Phaser.GameObjects.Graphics;
+    private activeGraphicsText: Phaser.GameObjects.Text;;
     constructor(dataservice: DataService) {
         super({
             key: 'main'
@@ -26,6 +29,7 @@ export class main extends Phaser.Scene {
         this.dataservice.getPlayer().then(
             (p) => {
                 this.player = p;
+                
             });
     }
 
@@ -35,6 +39,7 @@ export class main extends Phaser.Scene {
         this.load.image('starm', 'assets/s/m.png');
         this.load.image('asteroida', 'assets/asteroid.png');
         this.preloadPlanets();
+
     }
 
     preloadPlanets() {
@@ -64,6 +69,7 @@ export class main extends Phaser.Scene {
                     self.spaceship.setVelocity(0, 0);
                 });
                 this.spaceship.setDepth(1);
+                this.spaceship.setScale(.75);
                 this.physics.world.enable([this.spaceship]);
                 this.spaceship.setDrag(45);//https://photonstorm.github.io/phaser3-docs/Phaser.Physics.Arcade.Components.Drag.html#setDrag
 
@@ -87,7 +93,37 @@ export class main extends Phaser.Scene {
                             (o) => {
                                 let systemObject = this.add.sprite(o.icoords.x, o.icoords.y, o.type + o.class).setInteractive();
                                 systemObject.on('pointerdown', function () {
-                                    self.com.setText(o.name);
+                                    self.spaceship.setVelocity(0, 0);
+                                    if (o.type == 'star') {
+                                        if (self.activeGraphics) {
+                                            self.activeGraphics.destroy();
+                                        }
+
+                                        self.activeGraphics = self.add.graphics({
+                                            x: o.icoords.x - 40, y: o.icoords.y - 40,
+                                            fillStyle: { color: 0x0000ff, alpha: 0.6 },
+                                            lineStyle: { color: 0x00ff00 }
+
+                                        });
+                                        if (self.activeGraphicsText)
+                                        {
+                                            self.activeGraphicsText.destroy();
+                                            
+                                        }
+                                        self.activeGraphicsText = self.add.text(o.icoords.x, o.icoords.y, 'Refuel', { fontFamily: 'Arial', fontSize: 32, color: '#ffffff' });
+                                        self.activeGraphicsText.setInteractive();
+                                        self.activeGraphicsText.on('pointerdown',function(){
+                                            self.player.ship.fuel = self.player.ship.fuelmax;
+                                            self.activeGraphicsText.destroy();
+                                            self.activeGraphics.destroy();
+                                            self.isDomShowing = false;
+                                        })
+                                        self.activeGraphics.fillRect(0, 0, 180, 180);
+                                        self.isDomShowing = true;
+                                        self.com.setText(o.name);
+                                    } else {
+                                        self.com.setText(o.name);
+                                    }
                                 });
                                 this.systemMembers.push(systemObject);
                             });
@@ -98,18 +134,23 @@ export class main extends Phaser.Scene {
     }
 
     update() {
-        if (!this.isTraveling && this.finishedLoading) {
+        if (this.player.ship.fuel > 0 && !this.isTraveling && !this.isDomShowing && this.finishedLoading) {
+            if (this.pointer.isDown || this.touch.isDown || this.cursors.up.isDown)
+            {
+                this.player.ship.fuel -=1;
+            }
             if (this.pointer.isDown) {
+                
                 this.SetVelocityAndRotation(this.pointer);
             } else if (this.touch.isDown) {
                 this.SetVelocityAndRotation(this.touch);
+                
             }
 
             if (this.cursors.left.isDown) {
                 this.spaceship.angle -= 1;
             } else if (this.cursors.right.isDown) {
                 this.spaceship.angle += 1
-
             }
             if (this.cursors.up.isDown) {
                 let velocity: Phaser.Math.Vector2 = new Phaser.Math.Vector2()
@@ -119,7 +160,7 @@ export class main extends Phaser.Scene {
                 this.spaceship.setVelocity(0);
             }
             this.player.icoords = { x: this.spaceship.x, y: this.spaceship.y }
-            this.coords.text = this.player.coords.x + ':' + this.player.coords.y + ' ' + Math.round(this.player.icoords.x) + ' ' + Math.round(this.player.icoords.y);
+            this.coords.text = this.player.coords.x + ':' + this.player.coords.y + ' ' + Math.round(this.player.icoords.x) + ' ' + Math.round(this.player.icoords.y) + ' Fuel: ' + this.player.ship.fuel;
 
             if (this.spaceship.x > 3900 || this.spaceship.x < 100 || this.spaceship.y > 3900 || this.spaceship.y < 100) {
                 this.isTraveling = true;

@@ -5,9 +5,7 @@ import { iSystem, iSystemMember, iPlayer } from '../interfaces';
 })
 export class DataService {
   private db: IDBDatabase;
-  constructor() {
-    console.log('data service constructor')
-  }
+  constructor() {}
 
   getPlayer(): Promise<iPlayer> {
     return new Promise((resolve) => {
@@ -15,7 +13,7 @@ export class DataService {
       if (playerString && playerString.length > 0) {
         resolve(JSON.parse(playerString));
       } else {
-        let player: iPlayer = { icoords: { x: 1800, y: 1900 }, coords: { x: 0, y: 0 }, credits: 0, shipnamne: '' };
+        let player: iPlayer = { icoords: { x: 1800, y: 1900 }, coords: { x: 0, y: 0 }, credits: 0,ship:{name:'',fuelmax:100000,fuel:100000,weapons:[]} };
         this.storePlayer(player).then(
           () => {
             resolve(player);
@@ -156,7 +154,7 @@ export class DataService {
   initializeSystems() {
     this.openDataBase().then(
       () => {
-        let player: iPlayer = { icoords: { x: 1800, y: 1900 }, coords: { x: 0, y: 0 }, credits: 0, shipnamne: '' };
+        let player: iPlayer = { icoords: { x: 1800, y: 1900 }, coords: { x: 0, y: 0 }, credits: 0,ship:{name:'',fuel:100000,fuelmax:100000,weapons:[]} };
         this.storePlayer(player).then(
           (r) => {
             let galxyObjects:Array<iSystemMember> = [
