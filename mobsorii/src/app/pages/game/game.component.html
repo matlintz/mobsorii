@@ -1,1 +1,59 @@
-<div id="game"></div>
+<div class="container">
+    <div class="row">
+
+<input type="checkbox" [(ngModel)]="overlayOpen.open" id="menyAvPaa">
+<div class="col-sm-12" id="meny">
+    
+   <button (click)="closeOverlay()" class="secondary right">Close</button><h2 *ngIf="overlayOpen && overlayOpen.system">{{overlayOpen.system.name}}</h2>
+    <button *ngIf="overlayOpen.open && overlayOpen.show === 'star'" (click)="refuel()">Refuel</button>
+    <div *ngIf="overlayOpen.open && overlayOpen.show === 'planet'">
+        Planet
+        <div class="row">
+            <app-cargo *ngIf="overlayOpen.system.population && overlayOpen.system.population > 0" [cansell]='true' [player]='data.player'></app-cargo>
+        </div>
+    </div>
+    <div *ngIf="overlayOpen.open && overlayOpen.show === 'warp'">
+        <div class="row">
+            <div class="col-sm-4">
+                <input type="number" [(ngModel)]="data.warpx">
+            </div>
+            <div class="col-sm-4">
+                <input type="number" [(ngModel)]="data.warpy">
+            </div>
+            <div class="col-sm-4"><button class="btn btn-inverse" (click)="warp()" >Warp</button></div>
+        </div>
+        
+    </div>
+    <div *ngIf="overlayOpen.open && overlayOpen.show === 'ship'">
+        <h2>Ship</h2> <button class="btn btn-primary" (click)="jumpHome()" >Jump Home</button>
+        <div class="row">
+            <div class="col-sm-6">
+                <app-cargo [player]='data.player'></app-cargo>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="overlayOpen.open && overlayOpen.show === 'asteroid'">
+        <div class="row">
+            <div class="col-sm-6">
+                Asteroid
+        <ul>
+            <li *ngIf="asteroidOreLoad.Iron">Iron: {{asteroidOreLoad.Iron*100}}%</li>
+            <li *ngIf="asteroidOreLoad.Nickel">Nickel: {{asteroidOreLoad.Nickel*100}}%</li>
+            <li *ngIf="asteroidOreLoad.Titanium">Titanium: {{asteroidOreLoad.Titanium*100}}%</li>
+            <li *ngIf="asteroidOreLoad.Gold">Gold: {{asteroidOreLoad.Gold*100}}%</li>
+            <li *ngIf="asteroidOreLoad.Rare">Rare: {{asteroidOreLoad.Rare*100}}%</li>
+            <li *ngIf="asteroidOreLoad.Alkaline">Alkaline: {{asteroidOreLoad.Alkaline*100}}%</li>
+        </ul>
+            </div>
+            <div class="col-sm-6">
+                <app-cargo [player]='data.player'></app-cargo>
+            </div>
+        </div>
+        
+        <button class="inverse" *ngIf="data.player.ship.cargospace -data.player.cargoUsed > 0" (click)="mine(overlayOpen.system)">Mine</button>
+    </div>
+</div>
+</div>
+<div class="row">
+    <div class="col-sm-12" id="game"></div>
+</div>

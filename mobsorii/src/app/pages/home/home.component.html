@@ -1,17 +1,17 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-6">  
-            <a *ngIf="!dbInitializing" class="button primary" href="game">Play 0.0.5</a>  
+            <a *ngIf="!dbInitializing" class="button primary" href="game">Play 0.0.7</a>  
         </div>
         <div class="col-sm-6">
-            <button *ngIf="!dbInitializing" class="secondary" (click)="redoDatabase()">Redo Database</button>
+            <button *ngIf="!dbInitializing" class="secondary" (click)="redoDatabase()">Reinitialize Database</button>
             <span *ngIf="dbInitializing">Initializing Database</span>
         </div>
     </div>
 
     <div class="row">
         <div class="col-sm-12">
-            <button *ngIf="!dbInitializing" (click)="showSystems()">Show Galaxy Object</button>
+            <button *ngIf="!dbInitializing" (click)="showSystems()">Show Universe</button>
         </div>
     </div>
     <div class="row" *ngFor="let system of universeObjects">

@@ -1,0 +1,41 @@
+
+  #meny {
+      background: rgba(0, 0, 0, 0.788);
+      
+      width: 50rem;
+      height: 100vh;
+      position: fixed;
+      right: 0;
+      transition-timing-function: cubic-bezier(10,2,3,1);
+      transform: translateX(50rem);
+      top: 0;
+      z-index: 1001;
+      transition: 0.5s;
+  }
+  #menyAvPaa {
+      display: none;
+  }
+  
+  #menyAvPaa:checked ~ #meny {
+      transform: translateX(0rem);
+      width:100%;
+  }
+  
+  #burger {
+      position: absolute;
+      cursor: pointer;
+      width: 2rem;
+      height: 2rem;
+      right: 1rem;
+      top: 1rem;
+      display: flex;
+      justify-content: space-between;
+      flex-direction: column;
+      z-index: 1002;
+  }
+  
+  #burger > div {
+      height: 3px;
+      transition: 0.5s;
+      z-index: 999;
+  }

@@ -1,0 +1,54 @@
+Cargo (Max:{{data.player.ship.cargospace}} Available:{{data.player.ship.cargospace - data.player.cargoUsed}})
+<ul *ngIf="data.player && data.player.ship && data.player.ship.cargo && !cansell">
+    <li *ngIf="data.player.ship.cargo.Iron">Iron: {{data.player.ship.cargo.Iron}}</li>
+    <li *ngIf="data.player.ship.cargo.Nickel">Nickel: {{data.player.ship.cargo.Nickel}}</li>
+    <li *ngIf="data.player.ship.cargo.Titanium">Titanium: {{data.player.ship.cargo.Titanium}}</li>
+    <li *ngIf="data.player.ship.cargo.Gold">Gold: {{data.player.ship.cargo.Gold}}</li>
+    <li *ngIf="data.player.ship.cargo.Rare">Rare: {{data.player.ship.cargo.Rare}}</li>
+    <li *ngIf="data.player.ship.cargo.Alkaline">Alkaline: {{data.player.ship.cargo.Alkaline}}</li>
+</ul>
+<span *ngIf="!data.player || !data.player.ship || !data.player.ship.cargo">Empty</span>
+<div *ngIf="data.player && data.player.ship && data.player.ship.cargo && cansell">
+    <div class="row">
+        <div class="col-sm-12">Credits: {{data.player.credits}}</div>
+    </div>
+    <div class="row" *ngIf="data.player.ship.cargo.Iron">
+        <div class="col-sm-12">
+            <label>Iron <input type="number" min="0" max="{{playerCargo.Iron}}" [(ngModel)]="playerCargo.Iron"></label>
+            <button (click)="sell('Iron')">Sell</button>
+        </div>
+    </div>
+    <div class="row" *ngIf="data.player.ship.cargo.Nickel">
+        <div class="col-sm-12">
+            <label>Nickel <input type="number" min="0" max="{{playerCargo.Nickel}}" [(ngModel)]="playerCargo.Nickel"></label>
+            <button (click)="sell('Nickel')">Sell</button>
+        </div>
+    </div>
+    <div class="row"  *ngIf="data.player.ship.cargo.Titanium">
+        <div class="col-sm-12">
+            <label>Titanium <input type="number" min="0" max="{{playerCargo.Titanium}}" [(ngModel)]="playerCargo.Titanium"></label>
+            <button (click)="sell('Titanium')">Sell</button>
+        </div>
+    </div>
+    
+    <div class="row"  *ngIf="data.player.ship.cargo.Gold">
+        <div class="col-sm-12">
+            <label>Gold <input type="number" min="0" max="{{playerCargo.Gold}}" [(ngModel)]="playerCargo.Gold"></label>
+            <button (click)="sell('Gold')">Sell</button>
+        </div>
+    </div>
+
+    <div class="row"  *ngIf="data.player.ship.cargo.Rare">
+        <div class="col-sm-12">
+            <label>Rare <input type="number" min="0" max="{{playerCargo.Rare}}" [(ngModel)]="playerCargo.Rare"></label>
+            <button (click)="sell('Rare')">Sell</button>
+        </div>
+    </div>
+
+    <div class="row"  *ngIf="data.player.ship.cargo.Alkaline">
+        <div class="col-sm-12">
+            <label>Alkaline <input type="number" min="0" max="{{playerCargo.Alkaline}}" [(ngModel)]="playerCargo.Alkaline"></label>
+            <button (click)="sell('Alkaline')">Sell</button>
+        </div>
+    </div>
+</div>
