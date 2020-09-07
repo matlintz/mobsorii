@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import 'phaser';
 import { main } from '../../scenes/main';
 import { DataService } from '../../services/data.service'
-import { BehaviorSubject } from 'rxjs';
-import { iOpenOverlay, iCargo, iSystemMember, iPlayer } from 'src/app/interfaces';
+import { iOpenOverlay, iCargo, iSystemMember } from 'src/app/interfaces';
+
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
@@ -36,12 +36,14 @@ export class GameComponent implements OnInit {
     )
 
   }
+
   mine(asteroid:iSystemMember) {
     console.log(asteroid);
     console.log('mine!');
     
     this.data.miningInProcess.next({mining:true,asteroid:asteroid});
   }
+
   closeOverlay() {
     this.data.overlayOpen.next({ open: false, show: '' });
   }
@@ -70,7 +72,6 @@ export class GameComponent implements OnInit {
       width: window.innerWidth,
       height: window.innerHeight,
       resolution: 1,
-
       scale: {
         mode: Phaser.Scale.RESIZE,
         autoCenter: Phaser.Scale.CENTER_BOTH
@@ -82,8 +83,6 @@ export class GameComponent implements OnInit {
       scene: [new main(this.data)],
     };
     this.phaser = new Phaser.Game(this.phaserConfig);
-
   }
-
 
 }

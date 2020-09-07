@@ -9,7 +9,7 @@
     <div *ngIf="overlayOpen.open && overlayOpen.show === 'planet'">
         Planet
         <div class="row">
-            <app-cargo *ngIf="overlayOpen.system.population && overlayOpen.system.population > 0" [cansell]='true' [player]='data.player'></app-cargo>
+            <app-cargo *ngIf="overlayOpen.system.population && overlayOpen.system.population > 0"></app-cargo>
         </div>
     </div>
     <div *ngIf="overlayOpen.open && overlayOpen.show === 'warp'">
