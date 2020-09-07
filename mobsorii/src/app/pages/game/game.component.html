@@ -3,7 +3,9 @@
 
 <input type="checkbox" [(ngModel)]="overlayOpen.open" id="menyAvPaa">
 <div class="col-sm-12" id="meny">
-    
+    <div class="row">
+        <div class="col-sm-12">Credits: {{data.player.credits}}</div>
+    </div>
    <button (click)="closeOverlay()" class="secondary right">Close</button><h2 *ngIf="overlayOpen && overlayOpen.system">{{overlayOpen.system.name}}</h2>
     <button *ngIf="overlayOpen.open && overlayOpen.show === 'star'" (click)="refuel()">Refuel</button>
     <div *ngIf="overlayOpen.open && overlayOpen.show === 'planet'">

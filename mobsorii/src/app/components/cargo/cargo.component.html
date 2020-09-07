@@ -9,9 +9,7 @@ Cargo (Max:{{data.player.ship.cargospace}} Available:{{data.player.ship.cargospa
 </ul>
 <span *ngIf="!data.player || !data.player.ship || !data.player.ship.cargo">Empty</span>
 <div *ngIf="data.player && data.player.ship && data.player.ship.cargo && cansell">
-    <div class="row">
-        <div class="col-sm-12">Credits: {{data.player.credits}}</div>
-    </div>
+ 
     <div class="row" *ngIf="data.player.ship.cargo.Iron">
         <div class="col-sm-12">
             <label>Iron <input type="number" min="0" max="{{playerCargo.Iron}}" [(ngModel)]="playerCargo.Iron"></label>
