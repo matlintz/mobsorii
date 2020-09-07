@@ -53,6 +53,11 @@ export class main extends Phaser.Scene {
         this.load.image('starg', 'assets/s/g.png');
         this.load.image('warpg', 'assets/warp.png');
         this.load.image('asteroida', 'assets/asteroid.png');
+        this.load.image('asteroidb', 'assets/asteroid.png');
+        this.load.image('asteroidc', 'assets/asteroid.png');
+        this.load.image('asteroidd', 'assets/asteroid.png');
+        this.load.image('asteroide', 'assets/asteroid.png');
+        this.load.image('asteroidf', 'assets/asteroid.png');
         this.preloadPlanets();
 
     }
@@ -163,7 +168,7 @@ export class main extends Phaser.Scene {
                         this.system.objects.forEach(
                             (o) => {
                                 let systemObject = this.add.sprite(o.icoords.x, o.icoords.y, o.type + o.class).setInteractive();
-                                console.log(o);
+                                
                                 systemObject.on('pointerdown', function () {
                                     let distp: number = Phaser.Math.Distance.BetweenPoints(self.dataservice.player.icoords, systemObject);
 
@@ -175,11 +180,8 @@ export class main extends Phaser.Scene {
                                         self.dataservice.player.icoords = { x: self.spaceship.x, y: self.spaceship.y };
                                         self.dataservice.storePlayer(self.dataservice.player).then(
                                             () => {
-
-
                                             });
                                     }
-
                                 });
                                 this.systemMembers.push(systemObject);
                             });
@@ -194,12 +196,12 @@ export class main extends Phaser.Scene {
             if (this.pointer.isDown || this.touch.isDown || this.cursors.up.isDown) {
                 this.dataservice.player.ship.fuel -= 1;
             }
+
             if (this.pointer.isDown) {
 
                 this.SetVelocityAndRotation(this.pointer);
             } else if (this.touch.isDown) {
                 this.SetVelocityAndRotation(this.touch);
-
             }
 
             if (this.cursors.left.isDown) {
@@ -207,6 +209,7 @@ export class main extends Phaser.Scene {
             } else if (this.cursors.right.isDown) {
                 this.spaceship.angle += 1
             }
+
             if (this.cursors.up.isDown) {
                 let velocity: Phaser.Math.Vector2 = new Phaser.Math.Vector2()
                 this.physics.velocityFromRotation(this.spaceship.rotation, 150, velocity);
@@ -214,9 +217,9 @@ export class main extends Phaser.Scene {
             } else if (this.cursors.down.isDown) {
                 this.spaceship.setVelocity(0);
             }
+
             this.dataservice.player.icoords = { x: this.spaceship.x, y: this.spaceship.y }
             this.coords.text = this.dataservice.player.coords.x + ':' + this.dataservice.player.coords.y + ' ' + Math.round(this.dataservice.player.icoords.x) + ' ' + Math.round(this.dataservice.player.icoords.y) + ' Fuel: ' + this.dataservice.player.ship.fuel;
-
             if (this.spaceship.x > 3900 || this.spaceship.x < 100 || this.spaceship.y > 3900 || this.spaceship.y < 100) {
                 this.isTraveling = true;
                 this.travelTo();
@@ -225,7 +228,6 @@ export class main extends Phaser.Scene {
     }
 
     travelTo() {
-
         let direction: { x: number, y: number } = { x: 0, y: 0 };
         let newiCoords: { x: number, y: number } = this.dataservice.player.icoords;
         if (this.spaceship.x > 3900) {
@@ -243,11 +245,12 @@ export class main extends Phaser.Scene {
             newiCoords.y = 3850;
             direction.y = -1;
         }
+
         this.systemMembers.forEach(
             (s) => {
                 s.destroy();
-            }
-        )
+            });
+
         this.dataservice.player.coords.x += direction.x;
         this.dataservice.player.coords.y += direction.y;
         this.dataservice.player.icoords = newiCoords;
