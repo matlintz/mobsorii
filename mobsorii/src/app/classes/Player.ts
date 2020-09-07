@@ -1,11 +1,14 @@
 import { iShip, iCargo, iPlayer } from '../interfaces';
+import { BehaviorSubject } from 'rxjs';
 export class Player implements iPlayer {
     public coords: { x: number, y: number };
     public icoords: { x: number, y: number };
     public credits: number;
     public ship: iShip;
     public cargoUsed: number = 0;
+    
     constructor() {
+        
 
     }
 
@@ -22,7 +25,6 @@ export class Player implements iPlayer {
         Object.keys(this.ship.cargo).forEach(key =>
             this.cargoUsed += this.ship.cargo[key]
         );
-        console.log(this.cargoUsed);
     }
 
     private roundCargo(): void {

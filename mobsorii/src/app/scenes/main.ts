@@ -1,7 +1,7 @@
 import 'phaser';
 import { DataService } from '../services/data.service';
-import { iSystem, iPlayer } from '../interfaces';
-import { Player } from '../classes/Player';
+import { iSystem } from '../interfaces';
+
 export class main extends Phaser.Scene {
     private spaceship: Phaser.Physics.Arcade.Sprite;
     private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -12,16 +12,26 @@ export class main extends Phaser.Scene {
     private dataservice: DataService
     private system: iSystem;
     private systemMembers: Phaser.GameObjects.Sprite[] = [];
-
+    private zoom:number = 1;
     private isTraveling: boolean = false;
     private finishedLoading: boolean = false;
     private overlayShowing: boolean = false;
+    
     constructor(dataservice: DataService) {
         super({
             key: 'main'
         });
 
         this.dataservice = dataservice;
+        this.dataservice.zoom.subscribe(
+            (z) => {
+                this.zoom = z;
+                if (this.cameras && this.cameras.main){
+                    this.cameras.main.setZoom(z);
+                }
+               console.log(z);
+            }
+        )
         this.dataservice.overlayOpen.subscribe(
             (d) => {
                 this.overlayShowing = d.open;
@@ -73,7 +83,8 @@ export class main extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys();
         this.pointer = this.input.activePointer;//https://photonstorm.github.io/phaser3-docs/Phaser.Input.Pointer.html
         this.touch = this.input.pointer1;
-        this.cameras.main.setBounds(0, 0, 4000, 4000);
+        this.cameras.main.setBounds(0, 0, 4000, 4000).setZoom(1);
+        
         this.physics.world.setBounds(0, 0, 4000, 4000);
         this.add.image(0, 0, 'background').setOrigin(0).setScale(4);
         this.coords = this.add.text(25, 25, '', { fontFamily: 'Arial', fontSize: 28, color: '#00ff00' });
@@ -105,7 +116,7 @@ export class main extends Phaser.Scene {
     refuel(): Promise<boolean> {
         return new Promise((resolve) => {
             this.dataservice.player.ship.fuel = this.dataservice.player.ship.fuelmax;
-            this.dataservice.storePlayer(this.dataservice.player).then(
+            this.dataservice.storePlayer().then(
                 () => {
 
                     resolve(true);
@@ -147,7 +158,7 @@ export class main extends Phaser.Scene {
             this.dataservice.player.coords.y = y;
             this.dataservice.player.icoords.x = ix;
             this.dataservice.player.icoords.y = iy;
-            
+            this.dataservice.storePlayer();
             this.loadSystem().then(
                 () => {
                     this.isTraveling = false;
@@ -168,7 +179,7 @@ export class main extends Phaser.Scene {
                         this.system.objects.forEach(
                             (o) => {
                                 let systemObject = this.add.sprite(o.icoords.x, o.icoords.y, o.type + o.class).setInteractive();
-                                
+
                                 systemObject.on('pointerdown', function () {
                                     let distp: number = Phaser.Math.Distance.BetweenPoints(self.dataservice.player.icoords, systemObject);
 
@@ -178,7 +189,7 @@ export class main extends Phaser.Scene {
                                         self.dataservice.overlayOpen.next({ open: true, show: o.type, system: o });
                                         self.com.setText(o.name);
                                         self.dataservice.player.icoords = { x: self.spaceship.x, y: self.spaceship.y };
-                                        self.dataservice.storePlayer(self.dataservice.player).then(
+                                        self.dataservice.storePlayer().then(
                                             () => {
                                             });
                                     }
@@ -254,7 +265,7 @@ export class main extends Phaser.Scene {
         this.dataservice.player.coords.x += direction.x;
         this.dataservice.player.coords.y += direction.y;
         this.dataservice.player.icoords = newiCoords;
-        this.dataservice.storePlayer(this.dataservice.player);
+        this.dataservice.storePlayer();
         this.loadSystem().then(
             () => {
                 this.isTraveling = false;

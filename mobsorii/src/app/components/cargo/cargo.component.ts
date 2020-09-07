@@ -27,7 +27,7 @@ export class CargoComponent implements OnChanges {
     this.data.player.cargoUsed -= this.playerCargo[t];
     this.data.player.ship.cargo[t] -= this.playerCargo[t];
     this.playerCargo[t] = this.data.player.ship.cargo[t];
-    this.data.storePlayer(this.data.player).then(
+    this.data.storePlayer().then(
       (r) => {
        
       }

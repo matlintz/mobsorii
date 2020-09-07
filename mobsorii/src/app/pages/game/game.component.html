@@ -11,7 +11,7 @@
     <div *ngIf="overlayOpen.open && overlayOpen.show === 'planet'">
         Planet
         <div class="row">
-            <app-cargo *ngIf="overlayOpen.system.population && overlayOpen.system.population > 0"></app-cargo>
+            <app-cargo *ngIf="overlayOpen.system.population && overlayOpen.system.population > 0" [cansell]=true></app-cargo>
         </div>
     </div>
     <div *ngIf="overlayOpen.open && overlayOpen.show === 'warp'">
@@ -28,6 +28,8 @@
     </div>
     <div *ngIf="overlayOpen.open && overlayOpen.show === 'ship'">
         <h2>Ship</h2> <button class="btn btn-primary" (click)="jumpHome()" >Jump Home</button>
+        <input type="range" min=".1" max="4" step=".1" [(ngModel)]="zoom" (change)="setZoom()">{{zoom}}
+
         <div class="row">
             <div class="col-sm-6">
                 <app-cargo [player]='data.player'></app-cargo>

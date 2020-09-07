@@ -12,9 +12,11 @@ export class DataService {
   public miningInProcess: BehaviorSubject<{mining:boolean,asteroid:iSystemMember}>;
   public warpx:number = 0;
   public warpy:number = 0;
+  public zoom: BehaviorSubject<number>;
   constructor() {
     this.overlayOpen = new BehaviorSubject({open:false,show:''});
     this.miningInProcess = new BehaviorSubject({mining:false,asteroid:null});
+    this.zoom = new BehaviorSubject(1);
     this.player = new Player();
     this.getPlayer().then(
       (p) => {
@@ -32,7 +34,7 @@ export class DataService {
       } else {
         let player: iPlayer = this.newPlayer();
         
-        this.storePlayer(player).then(
+        this.storePlayer().then(
           () => {
             resolve(player);
           });
@@ -44,10 +46,10 @@ export class DataService {
     return  { icoords: { x: 1800, y: 1900 }, coords: { x: 0, y: 0 }, credits: 0,ship:{name:'',cargospace:100,cargo:{},  fuelmax:10000,fuel:10000,weapons:[],class:''} };
 
   }
-  storePlayer(player: iPlayer): Promise<boolean> {
+
+  storePlayer(): Promise<boolean> {
     return new Promise((resolve) => {
-      let playerString = JSON.stringify(player);
-      localStorage.setItem("player", playerString);
+      localStorage.setItem("player", JSON.stringify(this.player));
       resolve(true);
     })
   }
@@ -178,8 +180,8 @@ export class DataService {
   initializeSystems() {
     this.openDataBase().then(
       () => {
-        let player: iPlayer = { icoords: { x: 1800, y: 1900 }, coords: { x: 0, y: 0 }, credits: 0,ship:{name:'',cargo:{},cargospace:100, fuel:10000,fuelmax:10000,weapons:[],class:''} };
-        this.storePlayer(player).then(
+       
+        this.storePlayer().then(
           (r) => {
             let importSystems:Array<iImportSystemMember> = this.importSystems();
             importSystems.forEach(s => {

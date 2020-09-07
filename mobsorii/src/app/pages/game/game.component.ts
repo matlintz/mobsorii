@@ -14,17 +14,25 @@ export class GameComponent implements OnInit {
   public phaser: Phaser.Game;
   public overlayOpen: iOpenOverlay = { open: false, show: '' };
   public asteroidOreLoad: iCargo = {};
-  
+  public zoom:number;
   constructor(public data: DataService) {
+    this.data.zoom.subscribe(
+      (z) => {
+ 
+        this.zoom = z;
+      }
+    )
     this.data.overlayOpen.subscribe(
       (d) => {
         this.overlayOpen = d;
-       
         if (d.system && d.system.type === 'asteroid'){
           this.asteroidOreLoad = this.data.asteroidOreLevel(d.system.class);
-          
         }
       });
+  }
+
+  setZoom(){
+    this.data.zoom.next(this.zoom);
   }
 
   warp() {
